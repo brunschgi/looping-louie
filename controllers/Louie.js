@@ -1,4 +1,4 @@
-module.exports = function (app, io, socket) {
+module.exports = function (app, io) {
 
     /**
      * events in:
@@ -41,7 +41,7 @@ module.exports = function (app, io, socket) {
         /*
          * join.
          */
-        join: function (data) {
+        join: function (data, socket) {
             var maxConnections = 4;
             if(io.sockets.clients(data.room).length < maxConnections) {
                 socket.join(data.room);
@@ -63,7 +63,7 @@ module.exports = function (app, io, socket) {
         /*
          * leave.
          */
-        leave: function (data) {
+        leave: function (data, socket) {
             socket.leave(data.room);
 
             delete model.players[socket.id];
@@ -76,7 +76,7 @@ module.exports = function (app, io, socket) {
         /*
          * score
          */
-        score: function (data) {
+        score: function (data, socket) {
             var player = model.players[socket.id];
             player.lives--;
 
@@ -87,7 +87,7 @@ module.exports = function (app, io, socket) {
         /*
          * end
          */
-        end: function (data) {
+        end: function (data, socket) {
             var sockets = io.sockets.clients(data.room);
 
             // notify next player

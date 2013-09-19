@@ -52,12 +52,21 @@ var site = require('./controllers/Site')(app);
 app.get('/', site.index);
 
 // sockets
+var louie = require('./controllers/Louie')(app, io);
+
 io.sockets.on('connection', function (socket) {
-    var louie = require('./controllers/Louie')(app, io, socket);
-    socket.on('join', louie.join);
-    socket.on('leave', louie.leave);
-    socket.on('score', louie.score);
-    socket.on('end', louie.end);
+    socket.on('join', function(data) {
+        louie.join(data, socket);
+    });
+    socket.on('leave', function(data) {
+        louie.leave(data, socket);
+    });
+    socket.on('score', function(data) {
+        louie.score(data, socket);
+    });
+    socket.on('end', function(data) {
+        louie.end(data, socket);
+    });
 });
 
 

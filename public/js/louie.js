@@ -1,17 +1,18 @@
-function Louie(controller) {
-    this.controller = controller;
-    this.isHere =  false;
+var Louie = Class.extend({
+    init: function (controller) {
+        this.controller = controller;
+        this.isHere = false;
+        this.velocity = new paper.Point(10.0, 0.0);
+        this.acceleration = new paper.Point(0, 0.9);
 
-    this.velocity = new paper.Point(10.0, 0.0);
-    this.acceleration = new paper.Point(0, 0.9);
+        this.visual = new paper.Path.Circle({
+            center: new paper.Point(-20, 0),
+            radius: 20,
+            fillColor: 'red'
+        });
+    },
 
-    this.visual = new paper.Path.Circle({
-        center: new paper.Point(-20,0),
-        radius: 20,
-        fillColor: 'red'
-    });
-
-    this.isAboutLeaving = function() {
+    isAboutLeaving: function () {
         this.controller.isAboutLeaving({
             y: this.visual.position.y,
             vx: this.velocity.x,
@@ -19,14 +20,14 @@ function Louie(controller) {
             ax: this.acceleration.x,
             ay: this.acceleration.y
         });
-    };
+    },
 
-    this.pickedChicken = function() {
+    pickedChicken: function () {
         this.controller.pickedChicken();
-    };
+    },
 
-    this.arrives = function(data) {
-        this.visual.position.x = -this.visual.bounds.width/2.0;
+    arrives: function (data) {
+        this.visual.position.x = -this.visual.bounds.width / 2.0;
         if (data.y) {
             this.visual.position.y = data.y;
             this.velocity.x = data.vx;
@@ -34,10 +35,13 @@ function Louie(controller) {
             this.acceleration.x = data.ax;
             this.acceleration.y = data.ay;
         }
+        else {
+            console.log('!!!!!!!!!!!initial start');
+        }
         this.isHere = true;
-    };
+    },
 
-    this.updatePosition = function(view) {
+    updatePosition: function (view) {
         if (this.isHere) {
             this.velocity.x += this.acceleration.x;
             this.velocity.y += this.acceleration.y;
@@ -51,11 +55,11 @@ function Louie(controller) {
 
             if (hitBottom) {
                 this.velocity.y *= -0.8;
-                this.visual.position.y = view.bounds.bottom - this.visual.bounds.height/2.0;
+                this.visual.position.y = view.bounds.bottom - this.visual.bounds.height / 2.0;
             }
             if (hitTop) {
                 this.velocity.y *= -1.0;
-                this.visual.position.y = this.visual.bounds.height/2.0;
+                this.visual.position.y = this.visual.bounds.height / 2.0;
             }
 
             if (hitRight) {
@@ -63,14 +67,12 @@ function Louie(controller) {
             }
 
             if (leftView) {
-              this.isHere = false;
+                this.isHere = false;
             }
         }
-    };
+    },
 
-    this.push = function(delta) {
+    push: function (delta) {
         this.velocity.y += delta.y / 10.0;
-    };
-
-};
-
+    }
+});
