@@ -1,5 +1,5 @@
 var room = 'looping';
-var socket = io.connect('http://localhost');
+var socket = io.connect('http://' + document.location.hostname);
 
 // join room
 socket.emit('join', { room: room});
@@ -26,20 +26,24 @@ window.onload = function() {
         pickedChicken: function() {
             socket.emit('score', { room: room });
         },
-    
+
         isAboutLeaving: function(data) {
             data.room = room;
             socket.emit('end', data);
         }
-    
+
     };
-    
+
     app.chicken = new Chicken(app);
     app.louie = new Louie(app);
 
     view.onFrame = function() {
         app.louie.update();
         app.chicken.update();
+    };
+
+    view.onResize = function() {
+        app.louie.resize();
     };
 
     tool.onMouseDrag = function(event) {

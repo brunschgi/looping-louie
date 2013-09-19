@@ -4,12 +4,14 @@ var Louie = Class.extend({
         this.isHere = false;
         this.velocity = new paper.Point(10.0, 0.0);
         this.acceleration = new paper.Point(0, 0.9);
+        this.visual = new paper.Raster('louie');
 
-        this.visual = new paper.Path.Circle({
-            center: new paper.Point(-20, 0),
-            radius: 20,
-            fillColor: 'red'
-        });
+        this.resize();
+    },
+
+    resize: function() {
+        var ratio = (this.app.view.bounds.width / 8) / this.visual.bounds.width;
+        this.visual.scale(ratio);
     },
 
     isAboutLeaving: function () {
@@ -68,7 +70,7 @@ var Louie = Class.extend({
                 this.isHere = false;
             }
             if (this.visual.bounds.intersect(this.app.chicken.visual.bounds)) {
-                this.app.pickedChicken();          
+                this.app.pickedChicken();
             }
         }
     },
