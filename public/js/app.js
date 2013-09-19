@@ -23,25 +23,6 @@ var controller = {
 
 };
 
-var louie = new Louis(controller);
-
-socket.on('start', function (data) {
-    louie.arrives(data);
-});
-
-
-// receive
-socket.on('position', function (data) {
-    // update position (status bar)
-    console.log('update position to ' + data.id);
-});
-
-
-socket.on('state', function (data) {
-    // update state -> redraw players etc.
-    console.log('update state');
-});
-
 
 window.onload = function() {    
     
@@ -49,8 +30,9 @@ window.onload = function() {
     paper.setup(canvas);
     var view = paper.view;    
     var tool = new paper.Tool();
+
+    var louie = new Louie(controller);
         
-    
     view.onFrame = function() {   
         louie.updatePosition(view);
     };
@@ -58,6 +40,27 @@ window.onload = function() {
     tool.onMouseDrag = function(event) {
         louie.push(event.delta);
     };
+    
+
+    
+    
+    socket.on('start', function (data) {
+        louie.arrives(data);
+    });
+    
+    
+    // receive
+    socket.on('position', function (data) {
+        // update position (status bar)
+        console.log('update position to ' + data.id);
+    });
+    
+    
+    socket.on('state', function (data) {
+        // update state -> redraw players etc.
+        console.log('update state');
+    });
+    
     
 }
 	
