@@ -36,32 +36,34 @@ function Louie(controller) {
     };
 
     this.updatePosition = function(view) {
-        this.velocity.x += this.acceleration.x;
-        this.velocity.y += this.acceleration.y;
-        this.visual.position.x += this.velocity.x;
-        this.visual.position.y += this.velocity.y;
-        
-        var hitBottom = this.visual.bounds.bottom >= view.bounds.bottom;
-        var hitTop = this.visual.bounds.top <= view.bounds.top;
-        var hitRight = this.visual.bounds.right >= view.bounds.right;
-        var leftView = this.visual.bounds.left > view.bounds.right;
-        
-        if (hitBottom) {
-        this.velocity.y *= -0.8;
-        this.visual.position.y = view.bounds.bottom - this.visual.bounds.height/2.0;
+        if (this.isHere) {        
+            this.velocity.x += this.acceleration.x;
+            this.velocity.y += this.acceleration.y;
+            this.visual.position.x += this.velocity.x;
+            this.visual.position.y += this.velocity.y;
+            
+            var hitBottom = this.visual.bounds.bottom >= view.bounds.bottom;
+            var hitTop = this.visual.bounds.top <= view.bounds.top;
+            var hitRight = this.visual.bounds.right >= view.bounds.right;
+            var leftView = this.visual.bounds.left > view.bounds.right;
+            
+            if (hitBottom) {
+                this.velocity.y *= -0.8;
+                this.visual.position.y = view.bounds.bottom - this.visual.bounds.height/2.0;
+            }
+            if (hitTop) {
+                this.velocity.y *= -1.0;
+                this.visual.position.y = this.visual.bounds.height/2.0;    
+            }
+            
+            if (hitRight) {
+                this.isAboutLeaving();
+            }
+            
+            if (leftView) {
+              this.isHere = false;
+            }
         }
-        if (hitTop) {
-        this.velocity.y *= -1.0;
-        this.visual.position.y = this.visual.bounds.height/2.0;    
-        }
-        
-        if (hitRight) {
-        this.isAboutLeaving();
-        }
-        
-        if (leftView) {
-          this.isHere = false;
-        }        
     };
     
     this.push = function(delta) {
