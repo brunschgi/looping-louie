@@ -44,6 +44,7 @@ window.onload = function() {
 
     view.onResize = function() {
         app.louie.resize();
+        app.chicken.resize();
     };
 
     tool.onMouseDrag = function(event) {

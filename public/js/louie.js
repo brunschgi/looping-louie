@@ -69,9 +69,7 @@ var Louie = Class.extend({
             if (leftView) {
                 this.isHere = false;
             }
-            if (this.visual.bounds.intersect(this.app.chicken.visual.bounds)) {
-                this.app.pickedChicken();
-            }
+            this.app.chicken.checkIntersection(this.visual.bounds);
         }
     },
 
