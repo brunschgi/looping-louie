@@ -11,17 +11,6 @@ socket.on('maximum reached', function(data) {
 
 // socket.emit('leave', { room: room});
 
-var controller = {
-    pickedChicken: function() {
-        socket.emit('score', { room: room });
-    },
-
-    isAboutLeaving: function(data) {
-        data.room = room;
-        socket.emit('end', data);
-    }
-
-};
 
 
 window.onload = function() {
@@ -31,19 +20,35 @@ window.onload = function() {
     var view = paper.view;
     var tool = new paper.Tool();
 
-    var louie = new Louie(controller);
+
+    var app = {
+        view: view,
+        pickedChicken: function() {
+            socket.emit('score', { room: room });
+        },
+    
+        isAboutLeaving: function(data) {
+            data.room = room;
+            socket.emit('end', data);
+        }
+    
+    };
+    
+    app.chicken = new Chicken(app);
+    app.louie = new Louie(app);
 
     view.onFrame = function() {
-        louie.updatePosition(view);
+        app.louie.update();
+        app.chicken.update();
     };
 
     tool.onMouseDrag = function(event) {
-        louie.push(event.delta);
+        app.louie.push(event.delta);
     };
 
     socket.on('start', function (data) {
         console.log('start louie');
-        louie.arrives(data);
+        app.louie.arrives(data);
     });
 
 

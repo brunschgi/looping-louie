@@ -1,6 +1,6 @@
 var Louie = Class.extend({
-    init: function (controller) {
-        this.controller = controller;
+    init: function (app) {
+        this.app = app;
         this.isHere = false;
         this.velocity = new paper.Point(10.0, 0.0);
         this.acceleration = new paper.Point(0, 0.9);
@@ -13,7 +13,7 @@ var Louie = Class.extend({
     },
 
     isAboutLeaving: function () {
-        this.controller.isAboutLeaving({
+        this.app.isAboutLeaving({
             y: this.visual.position.y,
             vx: this.velocity.x,
             vy: this.velocity.y,
@@ -22,9 +22,6 @@ var Louie = Class.extend({
         });
     },
 
-    pickedChicken: function () {
-        this.controller.pickedChicken();
-    },
 
     arrives: function (data) {
         this.visual.position.x = -this.visual.bounds.width / 2.0;
@@ -41,7 +38,8 @@ var Louie = Class.extend({
         this.isHere = true;
     },
 
-    updatePosition: function (view) {
+    update: function () {
+        var view = this.app.view;
         if (this.isHere) {
             this.velocity.x += this.acceleration.x;
             this.velocity.y += this.acceleration.y;
@@ -68,6 +66,9 @@ var Louie = Class.extend({
 
             if (leftView) {
                 this.isHere = false;
+            }
+            if (this.visual.bounds.intersect(this.app.chicken.visual.bounds)) {
+                this.app.pickedChicken();          
             }
         }
     },
