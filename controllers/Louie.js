@@ -18,6 +18,16 @@ module.exports = function (app, io, socket) {
      *
      */
 
+
+    var colors = [
+        { normal : '#f7ec32', highlighted: '#db00c0' },
+        { normal : '#f9eb00', highlighted: '#f7ec32' },
+        { normal : '#019ac4', highlighted: '#01c2f7' },
+        { normal : '#ce0014', highlighted: '#ff021b' }
+    ];
+
+    var first = true;
+
     var model = {
         players: {
            /* socketId : {
@@ -35,10 +45,15 @@ module.exports = function (app, io, socket) {
             var maxConnections = 4;
             if(io.sockets.clients(data.room).length < maxConnections) {
                 socket.join(data.room);
-                model.players[socket.id] = { lives: 3 };
+                model.players[socket.id] = { lives: 3, color: colors[io.sockets.clients(data.room).length - 1] };
 
                 // notify all about the changed game state (additional player)
                 io.sockets.in(data.room).emit('state', model);
+
+                if(first) {
+                    socket.emit('start', {});
+                    first = false;
+                }
             }
             else {
                 socket.emit('maximum reached', { maxConnections: maxConnections})
