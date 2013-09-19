@@ -1,18 +1,18 @@
 function Louie(controller) {
     this.controller = controller;
     this.isHere =  false;
-        
+
     this.velocity = new paper.Point(10.0, 0.0);
     this.acceleration = new paper.Point(0, 0.9);
-    
+
     this.visual = new paper.Path.Circle({
         center: new paper.Point(-20,0),
         radius: 20,
         fillColor: 'red'
     });
-        
+
     this.isAboutLeaving = function() {
-        this.controller.isAboutLeaving({ 
+        this.controller.isAboutLeaving({
             y: this.visual.position.y,
             vx: this.velocity.x,
             vy: this.velocity.y,
@@ -20,11 +20,11 @@ function Louie(controller) {
             ay: this.acceleration.y
         });
     };
-    
+
     this.pickedChicken = function() {
         this.controller.pickedChicken();
     };
-    
+
     this.arrives = function(data) {
         this.visual.position.x = -this.visual.bounds.width/2.0;
         if (data.y) {
@@ -34,43 +34,43 @@ function Louie(controller) {
             this.acceleration.x = data.ax;
             this.acceleration.y = data.ay;
         }
-        this.isIsHere = true;
+        this.isHere = true;
     };
 
     this.updatePosition = function(view) {
-        if (this.isHere) {        
+        if (this.isHere) {
             this.velocity.x += this.acceleration.x;
             this.velocity.y += this.acceleration.y;
             this.visual.position.x += this.velocity.x;
             this.visual.position.y += this.velocity.y;
-            
+
             var hitBottom = this.visual.bounds.bottom >= view.bounds.bottom;
             var hitTop = this.visual.bounds.top <= view.bounds.top;
             var hitRight = this.visual.bounds.right >= view.bounds.right;
             var leftView = this.visual.bounds.left > view.bounds.right;
-            
+
             if (hitBottom) {
                 this.velocity.y *= -0.8;
                 this.visual.position.y = view.bounds.bottom - this.visual.bounds.height/2.0;
             }
             if (hitTop) {
                 this.velocity.y *= -1.0;
-                this.visual.position.y = this.visual.bounds.height/2.0;    
+                this.visual.position.y = this.visual.bounds.height/2.0;
             }
-            
+
             if (hitRight) {
                 this.isAboutLeaving();
             }
-            
+
             if (leftView) {
               this.isHere = false;
             }
         }
     };
-    
+
     this.push = function(delta) {
-        this.velocity.y += delta.y / 10.0;        
+        this.velocity.y += delta.y / 10.0;
     };
-    
+
 };
 
