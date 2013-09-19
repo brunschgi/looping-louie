@@ -27,11 +27,13 @@ function Louie(controller) {
     
     this.arrives = function(data) {
         this.visual.position.x = -this.visual.bounds.width/2.0;
-        this.visual.position.y = data.y;
-        this.velocity.x = data.vx;
-        this.velocity.y = data.vy;
-        this.acceleration.x = data.ax;
-        this.acceleration.y = data.ay;
+        if (data.y) {
+            this.visual.position.y = data.y;
+            this.velocity.x = data.vx;
+            this.velocity.y = data.vy;
+            this.acceleration.x = data.ax;
+            this.acceleration.y = data.ay;
+        }
         this.isIsHere = true;
     };
 
