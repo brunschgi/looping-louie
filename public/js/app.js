@@ -6,12 +6,12 @@ socket.emit('join', { room: room});
 
 // notify
 socket.emit('end', { room: room, x: 2, y: 7, vx: 5, vy: 7 });
-socket.emit('score', { room: room, lives: 2 });
+socket.emit('score', { room: room });
 
 // receive
 socket.on('position', function (data) {
     // update position (status bar)
-    console.log('update position');
+    console.log('update position to ' + data.id);
 });
 
 socket.on('start', function (data) {
@@ -23,9 +23,9 @@ socket.on('start', function (data) {
     }, 1000);
 });
 
-socket.on('score', function (data) {
-    // someone got hitted -> update score
-    console.log('update score');
+socket.on('state', function (data) {
+    // update state -> redraw players etc.
+    console.log('update state');
 });
 
 socket.on('maximum reached', function(data) {

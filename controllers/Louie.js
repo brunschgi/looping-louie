@@ -1,12 +1,44 @@
 module.exports = function (app, io, socket) {
+
+    /**
+     * events in:
+     *
+     * join -> join game
+     * leave -> leave game
+     * score -> got hitted
+     * end -> im finished, its the next players turn
+     *
+     *
+     * events out:
+     *
+     * state -> send model with player and position info
+     * maximum reached -> you are not allowed to join (maximum reached)
+     * start -> start drawing louie
+     * position -> update position
+     *
+     */
+
+    var model = {
+        players: {
+           /* socketId : {
+            'lives': 3
+           } */
+        },
+        position: 0
+    };
+
     return {
         /*
          * join.
          */
         join: function (data) {
             var maxConnections = 4;
-            if(io.sockets.clients('room').length < maxConnections) {
+            if(io.sockets.clients(data.room).length < maxConnections) {
                 socket.join(data.room);
+                model.players[socket.id] = { lives: 3 };
+
+                // notify all about the changed game state (additional player)
+                io.sockets.in(data.room).emit('state', model);
             }
             else {
                 socket.emit('maximum reached', { maxConnections: maxConnections})
@@ -18,14 +50,23 @@ module.exports = function (app, io, socket) {
          */
         leave: function (data) {
             socket.leave(data.room);
+
+            delete model.players[socket.id];
+
+            // notify all about the changed game state (lost player)
+            io.sockets.in(data.room).emit('state', model);
         },
+
 
         /*
          * score
          */
         score: function (data) {
-            console.log(data);
-            io.sockets.in(data.room).emit('score', data);
+            var player = model.players[socket.id];
+            player.lives--;
+
+            // notify all about the changed game state (updated lives)
+            io.sockets.in(data.room).emit('state', model);
         },
 
         /*
@@ -33,9 +74,6 @@ module.exports = function (app, io, socket) {
          */
         end: function (data) {
             var sockets = io.sockets.clients(data.room);
-
-            // update position
-            io.sockets.in(data.room).emit('position', data);
 
             // notify next player
             for(var i = 0, len = sockets.length; i < len; i++) {
@@ -47,7 +85,11 @@ module.exports = function (app, io, socket) {
                         index = 0;
                     }
 
-                    io.sockets.socket(sockets[i].id).emit('start', data);
+                    // notify next player
+                    io.sockets.socket(sockets[index].id).emit('start', data);
+
+                    // notify all about the next position
+                    io.sockets.in(data.room).emit('position', { id : sockets[index].id });
                 }
             }
         }
