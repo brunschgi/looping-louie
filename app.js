@@ -53,10 +53,11 @@ app.get('/', site.index);
 
 // sockets
 io.sockets.on('connection', function (socket) {
-    var louie = require('./controllers/Louie')(app, socket);
+    var louie = require('./controllers/Louie')(app, io, socket);
     socket.on('join', louie.join);
     socket.on('leave', louie.leave);
-    socket.on('state', louie.state);
+    socket.on('score', louie.score);
+    socket.on('end', louie.end);
 });
 
 
