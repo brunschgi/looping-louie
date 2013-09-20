@@ -32,13 +32,13 @@ window.onload = function() {
 
     };
 
-    app.chicken = new Chicken(app, 'chicken_black-');
     app.louie = new Louie(app);
     app.statusBar = new StatusBar(app);
 
     view.onFrame = function() {
         app.louie.onFrame();
-        app.chicken.onFrame();
+        if (app.chicken)
+            app.chicken.onFrame();
         for(var i in app.predecessorsChicken) {
             if (app.predecessorsChicken[i].isActive())
                 app.predecessorsChicken[i].onFrame();
@@ -60,6 +60,7 @@ window.onload = function() {
     socket.on('welcome', function (data) {
         app.player = data;
         app.statusBar.ground(data.color.normal);
+        app.chicken = new Chicken(app, 'chicken_' + app.player.color.chickenColor + '-');
     });
 
     socket.on('start', function (data) {
