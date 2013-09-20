@@ -23,11 +23,18 @@ window.onload = function() {
 
     var app = {
         view: view,
+        
         pickedChicken: function() {
             socket.emit('score', { room: room });
         },
 
-        isAboutLeaving: function(data) {
+        chickenIsAboutLeaving: function(data) {
+            data.room = room;
+            data.msg = 'chickenArrives';
+            socket.emit('tellNext', data );
+        },
+        
+        louieIsAboutLeaving: function(data) {
             data.room = room;
             socket.emit('end', data);
         }
@@ -35,11 +42,13 @@ window.onload = function() {
     };
 
     app.chicken = new Chicken(app);
+    app.predecessorsChicken = new PredecessorChicken(app);
     app.louie = new Louie(app);
 
     view.onFrame = function() {
         app.louie.update();
         app.chicken.update();
+        app.predecessorsChicken.update();
     };
 
     view.onResize = function() {
@@ -56,6 +65,13 @@ window.onload = function() {
         app.louie.arrives(data);
     });
 
+    socket.on('msgFromPredecessor', function(data) {
+        console.log('message from predecessor: ' + data.msg);
+        if (data.msg == 'chickenArrives') {
+            app.predecessorsChicken.arrives(data);
+        }
+         
+    });
 
     // receive
     socket.on('position', function (data) {

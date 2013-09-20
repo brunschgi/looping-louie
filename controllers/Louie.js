@@ -36,6 +36,19 @@ module.exports = function (app, io) {
         },
         position: 0
     };
+    
+    var findNext = function (room, socket, callback) {
+        var sockets = io.sockets.clients(room);
+        for(var i = 0, len = sockets.length; i < len; i++) {
+            var curr = sockets[i];
+            if(socket.id === curr.id) {
+                // its the turn for the next player (or the first if its the last)
+                var index = (i + 1) % len;
+                callback(sockets[index]);
+            }
+        }
+        
+    };
 
     return {
         /*
@@ -89,24 +102,22 @@ module.exports = function (app, io) {
          */
         end: function (data, socket) {
             var sockets = io.sockets.clients(data.room);
-
             // notify next player
-            for(var i = 0, len = sockets.length; i < len; i++) {
-                var curr = sockets[i];
-                if(socket.id === curr.id) {
-                    // its the turn for the next player (or the first if its the last)
-                    var index = i + 1;
-                    if(index == len) {
-                        index = 0;
-                    }
+            findNext(data.room, socket, function(nextSocket) {
+                // notify next player
+                io.sockets.socket(nextSocket.id).emit('start', data);
 
-                    // notify next player
-                    io.sockets.socket(sockets[index].id).emit('start', data);
-
-                    // notify all about the next position
-                    io.sockets.in(data.room).emit('position', { id : sockets[index].id });
-                }
-            }
+                // notify all about the next position
+                io.sockets.in(data.room).emit('position', { id : nextSocket.id });
+            });
+        },
+        
+        tellNext: function (data, socket) {
+            findNext(data.room, socket, function(nextSocket) {
+                // notify next player
+                delete data.room;
+                io.sockets.socket(nextSocket.id).emit('msgFromPredecessor', data);
+            });
         }
     }
 };

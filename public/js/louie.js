@@ -1,9 +1,6 @@
-var Louie = Class.extend({
+var Louie = ArrivingObject.extend({
     init: function (app) {
-        this.app = app;
-        this.isHere = false;
-        this.velocity = new paper.Point(10.0, 0.0);
-        this.acceleration = new paper.Point(0, 0.9);
+        this._super(app);
         this.visual = new paper.Raster('louie');
 
         this.resize();
@@ -14,62 +11,14 @@ var Louie = Class.extend({
         this.visual.scale(ratio);
     },
 
-    isAboutLeaving: function () {
-        this.app.isAboutLeaving({
-            y: this.visual.position.y,
-            vx: this.velocity.x,
-            vy: this.velocity.y,
-            ax: this.acceleration.x,
-            ay: this.acceleration.y
-        });
-    },
-
-
-    arrives: function (data) {
-        this.visual.position.x = -this.visual.bounds.width / 2.0;
-        if (data.y) {
-            this.visual.position.y = data.y;
-            this.velocity.x = data.vx;
-            this.velocity.y = data.vy;
-            this.acceleration.x = data.ax;
-            this.acceleration.y = data.ay;
-        }
-        else {
-            console.log('!!!!!!!!!!!initial start');
-        }
-        this.isHere = true;
-    },
 
     update: function () {
-        var view = this.app.view;
+        var cond = this._super();
         if (this.isHere) {
-            this.velocity.x += this.acceleration.x;
-            this.velocity.y += this.acceleration.y;
-            this.visual.position.x += this.velocity.x;
-            this.visual.position.y += this.velocity.y;
-
-            var hitBottom = this.visual.bounds.bottom >= view.bounds.bottom;
-            var hitTop = this.visual.bounds.top <= view.bounds.top;
-            var hitRight = this.visual.bounds.right >= view.bounds.right;
-            var leftView = this.visual.bounds.left > view.bounds.right;
-
-            if (hitBottom) {
-                this.velocity.y *= -0.8;
-                this.visual.position.y = view.bounds.bottom - this.visual.bounds.height / 2.0;
+            if (cond.hitRight) {
+                this.app.louieIsAboutLeaving(this.getMovingState(this.visual));
             }
-            if (hitTop) {
-                this.velocity.y *= -1.0;
-                this.visual.position.y = this.visual.bounds.height / 2.0;
-            }
-
-            if (hitRight) {
-                this.isAboutLeaving();
-            }
-
-            if (leftView) {
-                this.isHere = false;
-            }
-            this.app.chicken.checkIntersection(this.visual.bounds);
+            this.app.chicken.checkCollision(this.visual.bounds, this);
         }
     },
 

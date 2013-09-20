@@ -67,6 +67,9 @@ io.sockets.on('connection', function (socket) {
     socket.on('end', function(data) {
         louie.end(data, socket);
     });
+    socket.on('tellNext', function(data) {
+        louie.tellNext(data, socket);
+    });
 });
 
 
