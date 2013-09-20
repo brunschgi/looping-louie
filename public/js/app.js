@@ -32,7 +32,7 @@ window.onload = function() {
 
     };
 
-    app.chicken = new Chicken(app);
+    app.chicken = new Chicken(app, 'chicken_black-');
     app.louie = new Louie(app);
     app.statusBar = new StatusBar(app);
 
