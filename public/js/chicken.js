@@ -14,7 +14,7 @@ var Chicken = AnimatedObject.extend({
     },
     
     reset: function() {        
-        if (!this.gameOver()) {
+        if (!this.isGameOver()) {
             this.visual.matrix = new paper.Matrix();
             this.visual.source = this.img + this.hits;
             this.scale();
@@ -51,7 +51,7 @@ var Chicken = AnimatedObject.extend({
     },
     
     checkCollision: function(bounds, otherObj) {
-        if (!this.gameOver() && !this.behavior.isActive() && this.visual.bounds.intersects(bounds)) {
+        if (!this.isGameOver() && !this.behavior.isActive() && this.visual.bounds.intersects(bounds)) {
             this.app.pickedChicken();
             this.visual.source = this.img + 'dead';
             this.hits++;
@@ -100,6 +100,7 @@ var PredecessorChicken = AnimatedObject.extend({
         this.visual = new paper.Raster(data.img);
         var ratio = (this.app.view.bounds.width / 10) / this.visual.bounds.width;
         this.visual.scale(ratio);        
+        this.visual.position.x = -this.visual.bounds.width / 2.0;
         
         var self = this;
         var hitRightNotified = false;
