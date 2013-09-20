@@ -43,7 +43,7 @@ var LeftToRightBehavior = Behavior.extend({
     
     setState: function(data) {
         if (data.y) {
-            this.visual.position.y = data.y;
+            this.visual.position.y = Math.max(0, Math.min(this.view.bounds.height, data.y));
             this.velocity.x = data.vx;
             this.velocity.y = data.vy;
             this.acceleration.x = data.ax;
