@@ -1,8 +1,8 @@
-var Louie = ArrivingObject.extend({
+var Louie = AnimatedObject.extend({
     init: function (app) {
         this._super(app);
         this.visual = new paper.Raster('louie');
-
+        this.reset();
         this.resize();
     },
 
@@ -10,19 +10,39 @@ var Louie = ArrivingObject.extend({
         var ratio = (this.app.view.bounds.width / 8) / this.visual.bounds.width;
         this.visual.scale(ratio);
     },
+    
 
-
-    update: function () {
-        var cond = this._super();
-        if (this.isHere) {
-            if (cond.hitRight) {
-                this.app.louieIsAboutLeaving(this.getMovingState(this.visual));
-            }
-            this.app.chicken.checkCollision(this.visual.bounds, this);
-        }
+    reset: function() {
+        this.behavior = null;
+        this.visual.position.x = -this.visual.bounds.width / 2.0;
     },
+    
+    appears: function(data) {
+        var self = this;
+        var hitRightNotified = false;
+        self.reset();
+        this.behavior = new LeftToRightBehavior(this.app.view, this.visual, {
+            hitRight: function() {
+                if (!hitRightNotified) {
+                    var data1 = {};
+                    self.behavior.getState(data1);
+                    self.app.louieIsAboutLeaving(data1);
+                    hitRightNotified = true;
+                }
+            },
+            leftView: function() { 
+                self.reset();
+            },
+            onFrame:  function() {
+                self.app.chicken.checkCollision(self.visual.bounds, self);
+            }
+        });
+        this.behavior.setState(data);        
+    },
+    
 
     push: function (delta) {
-        this.velocity.y += delta.y / 10.0;
+        if (this.behavior)
+            this.behavior.push(delta);
     }
 });

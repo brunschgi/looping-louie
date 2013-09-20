@@ -23,6 +23,8 @@ window.onload = function() {
 
     var app = {
         view: view,
+        predecessorsChicken: {},
+        chickenId: 0,
         
         pickedChicken: function() {
             socket.emit('score', { room: room });
@@ -38,17 +40,23 @@ window.onload = function() {
             data.room = room;
             socket.emit('end', data);
         }
+        
+        
 
     };
 
     app.chicken = new Chicken(app);
-    app.predecessorsChicken = new PredecessorChicken(app);
     app.louie = new Louie(app);
 
     view.onFrame = function() {
-        app.louie.update();
-        app.chicken.update();
-        app.predecessorsChicken.update();
+        app.louie.onFrame();
+        app.chicken.onFrame();
+        for(var i in app.predecessorsChicken) {  
+            if (app.predecessorsChicken[i].isActive())
+                app.predecessorsChicken[i].onFrame();
+            else
+                delete app.predecessorsChicken[i];
+        }
     };
 
     view.onResize = function() {
@@ -62,13 +70,15 @@ window.onload = function() {
 
     socket.on('start', function (data) {
         console.log('start louie');
-        app.louie.arrives(data);
+        app.louie.appears(data);
     });
 
     socket.on('msgFromPredecessor', function(data) {
         console.log('message from predecessor: ' + data.msg);
         if (data.msg == 'chickenArrives') {
-            app.predecessorsChicken.arrives(data);
+            var chicken = new PredecessorChicken(app);
+            chicken.appears(data);
+            app.predecessorsChicken[app.chickenId++] = chicken;
         }
          
     });
