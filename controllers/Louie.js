@@ -20,11 +20,11 @@ module.exports = function (app, io) {
 
 
     var colors = [
-        { normal : '#a80093', highlighted: '#db00c0', chickenColor: 'black' },
-        { normal : '#f9eb00', highlighted: '#faff00', chickenColor: 'yellow' },
-        { normal : '#019ac4', highlighted: '#01c2f7', chickenColor: 'blue' },
-        { normal : '#ce0014', highlighted: '#ff021b', chickenColor: 'red' },
-        { normal : '#3d8902', highlighted: '#53bb03', chickenColor: 'green' }
+        { normal : '#a80093', chickenColor: 'black' },
+        { normal : '#f9eb00', chickenColor: 'yellow' },
+        { normal : '#019ac4', chickenColor: 'blue' },
+        { normal : '#ce0014', chickenColor: 'red' },
+        { normal : '#3d8902', chickenColor: 'green' }
     ];
 
     var first = true;

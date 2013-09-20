@@ -7,6 +7,7 @@ window.onload = function() {
     paper.setup(canvas);
     var view = paper.view;
     var tool = new paper.Tool();
+    var groundHeight = view.bounds.height / 6;
 
 
     var app = {
@@ -59,7 +60,7 @@ window.onload = function() {
 
     socket.on('welcome', function (data) {
         app.player = data;
-        app.statusBar.ground(data.color.normal);
+        app.statusBar.ground(data.color.normal, groundHeight);
         app.chicken = new Chicken(app, 'chicken_' + app.player.color.chickenColor + '-');
     });
 

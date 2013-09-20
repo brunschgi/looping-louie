@@ -5,19 +5,19 @@ var StatusBar = Class.extend({
         this.group = new paper.Group();
         this.rects = {};
         this.players = null;
+        this.width = 0;
     },
 
     resize: function() {
         // TODO: resize status bar
     },
 
-    ground: function(color) {
+    ground: function(color, height) {
         // draw ground
-        console.log(this.view.bounds.bottomLeft);
         var bottomLeft = this.view.bounds.bottomLeft;
-        var height = this.view.bounds.height / 6;
         var ground = new paper.Path.Rectangle(new paper.Point(bottomLeft.x, bottomLeft.y - height), new paper.Size(this.view.bounds.width, height));
         ground.fillColor = color;
+        ground.sendToBack();
     },
 
     update: function(data) {
@@ -26,7 +26,7 @@ var StatusBar = Class.extend({
         var rects = this.rects = {};
         var chickens = [];
         var position = 0;
-        var width = this.view.bounds.width / 20;
+        var width = this.width = this.view.bounds.width / 20;
 
         this.group.removeChildren();
 
@@ -37,13 +37,14 @@ var StatusBar = Class.extend({
 
                 // create chickens
                 chickens[chickenColor] = [];
-                rects[id] = new paper.Path.Rectangle(new paper.Point(position, 0), new paper.Size(4 * width, 1.5 * width));
+                rects[id] = new paper.Path.Rectangle(new paper.Point(position, 0), new paper.Size(4 * width, 0.2 * width));
+                rects[id].fillColor = player.color.normal;
 
                 if(id == data.position) {
-                    rects[id].fillColor = player.color.highlighted;
+                    rects[id].bounds.height = 1.5 * width
                 }
                 else {
-                    rects[id].fillColor = player.color.normal;
+                    rects[id].bounds.height = 0.2 * width;
                 }
 
                 this.group.addChild(rects[id]);
@@ -76,10 +77,10 @@ var StatusBar = Class.extend({
 
                     if(id == data.id) {
                         // highlight
-                        rects[id].fillColor = player.color.highlighted;
+                        rects[id].bounds.height = this.width * 1.5;
                     }
                     else {
-                        rects[id].fillColor = player.color.normal;
+                        rects[id].bounds.height = this.width * 0.2;
                     }
                 }
             }
