@@ -93,29 +93,23 @@ var LeftToRightBehavior = Behavior.extend({
 var LeftToRightWithRotationBehavior = LeftToRightBehavior.extend({
     init: function(view, visual, callbacks) {
         this._super(view, visual, callbacks);
-        this.rotationAcceleration = 0;
-        this.rotation = 0;
+        this.rotationFactor = 1.0;
     },
 
     getState: function(data) {
         this._super(data);
-        data.r = this.rotation;
-        data.ra = this.rotationAcceleration;
+        data.rf = this.rotationFactor;
     },
     
     setState: function(data) {
         this._super(data);
         if (data.r) {
-            this.rotation = data.r;
-            this.rotationAcceleration= data.ra;
+            this.rotationFactor = data.rf;
         }
     },
     
     onFrame: function(event) {
-        if (this.rotation > 0) {
-            this.rotation += this.rotationAcceleration;
-            this.visual.rotate(this.rotation);
-        }
+        this.visual.rotate(this.velocity.length * this.rotationFactor);
         this._super(event);
     }
 

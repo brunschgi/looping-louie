@@ -50,7 +50,6 @@ var Chicken = AnimatedObject.extend({
                         self.reset();
                     }
             });
-            this.behavior.rotation = otherObj.behavior.velocity.length;
             this.behavior.velocity = new paper.Point(otherObj.behavior.velocity);
             this.behavior.acceleration = new paper.Point(otherObj.behavior.acceleration);
             this.behavior.velocity.y *= -1.0;
@@ -107,7 +106,6 @@ var PredecessorChicken = AnimatedObject.extend({
         
         if (this.behavior.acceleration.x == 0) {
             this.behavior.acceleration.x = -0.05;
-            this.behavior.rotationAcceleration = -0.1;
         }
     }
     
