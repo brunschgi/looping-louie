@@ -6,7 +6,7 @@ window.onload = function() {
     // display splash screen
     setTimeout(function() {
         var splash = document.body;
-        splash.style.backgroundImage = 'none';
+        splash.className = 'animate';
 
         var canvas = document.getElementById('canvas-louie');
         paper.setup(canvas);

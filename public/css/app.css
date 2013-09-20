@@ -9,6 +9,10 @@ body {
     background-repeat: no-repeat;
 }
 
+.animate {
+    background-image: none;
+}
+
 .inv {
     display: none;
 }
