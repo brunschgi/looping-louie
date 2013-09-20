@@ -61,7 +61,7 @@ window.onload = function() {
     socket.on('welcome', function (data) {
         app.player = data;
         app.statusBar.ground(data.color.normal, groundHeight);
-        app.chicken = new Chicken(app, 'chicken_' + app.player.color.chickenColor + '-');
+        app.chicken = new Chicken(app, 'chicken_' + app.player.color.chickenColor + '-', data.lives);
     });
 
     socket.on('start', function (data) {

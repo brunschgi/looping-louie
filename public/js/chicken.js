@@ -1,26 +1,31 @@
 var Chicken = AnimatedObject.extend({
-    init: function(app, img) {
+    init: function(app, img, lives) {
         this.img = img;
         this.hits = 1;
+        this.lives = lives;
         this._super(app);
         this.visual = new paper.Raster(this.img + this.hits);
         this.reset();        
     },
     
     reset: function() {        
-        this.visual.matrix = new paper.Matrix();
-        this.visual.source = this.img + this.hits;
-        this.scale();
-        var src = new paper.Point();
-        src.x = this.app.view.bounds.bottomCenter.x - this.visual.bounds.width / 2;
-        src.y = this.app.view.bounds.bottomCenter.y + this.visual.bounds.height * 2;
+        if (this.hits <= this.lives) {
+            this.visual.matrix = new paper.Matrix();
+            this.visual.source = this.img + this.hits;
+            this.scale();
+            var src = new paper.Point();
+            src.x = this.app.view.bounds.bottomCenter.x - this.visual.bounds.width / 2;
+            src.y = this.app.view.bounds.bottomCenter.y + this.visual.bounds.height * 2;
+            
+            var target = new paper.Point();
+            target.x = src.x;
+            target.y = this.app.view.bounds.bottomCenter.y - this.visual.bounds.height / 2;
         
-        var target = new paper.Point();
-        target.x = src.x;
-        target.y = this.app.view.bounds.bottomCenter.y - this.visual.bounds.height / 2;
-        
-        this.behavior = new AppearBehavior(this.app.view, this.visual, {});
-        this.behavior.setup(src, target, new paper.Point(0,-2));
+            this.behavior = new AppearBehavior(this.app.view, this.visual, {});
+            this.behavior.setup(src, target, new paper.Point(0,-2));
+        } else {
+            this.behavior = new Behavior(this.app.view, this.visual, {});
+        }
     },
 
     scale: function() {
