@@ -20,7 +20,9 @@ var Chicken = AnimatedObject.extend({
             
             var target = new paper.Point();
             target.x = src.x;
-            target.y = this.app.view.bounds.bottomCenter.y - this.visual.bounds.height / 2;
+            target.y = this.app.view.bounds.bottomCenter.y
+                        - this.visual.bounds.height / 2
+                        - (this.app.view.bounds.height * this.groundHeightScale);
         
             this.behavior = new AppearBehavior(this.app.view, this.visual, {});
             this.behavior.setup(src, target, new paper.Point(0,-2));
@@ -39,6 +41,9 @@ var Chicken = AnimatedObject.extend({
             this.visual.position.x = this.app.view.bounds.bottomCenter.x - this.visual.bounds.width/2;
             this.visual.position.y = this.app.view.bounds.bottomCenter.y - this.visual.bounds.height/2;  
         }
+        if (this.behavior && this.behavior.setBottomScaleOffset)
+            this.behavior.setBottomScaleOffset(this.groundHeightScale);        
+        
     },
     
     checkCollision: function(bounds, otherObj) {
@@ -62,6 +67,7 @@ var Chicken = AnimatedObject.extend({
                         self.reset();
                     }
             });
+            this.behavior.setBottomScaleOffset(this.groundHeightScale);                    
             this.behavior.velocity = new paper.Point(otherObj.behavior.velocity);
             this.behavior.acceleration = new paper.Point(otherObj.behavior.acceleration);
             this.behavior.velocity.y *= -1.0;
@@ -72,8 +78,9 @@ var Chicken = AnimatedObject.extend({
 });
 
 var PredecessorChicken = AnimatedObject.extend({
-    init: function(app) {
+    init: function(app, groundHeightScale) {
         this._super(app);
+        this.groundHeightScale = groundHeightScale;
     },
     
     remove: function() {
@@ -114,6 +121,7 @@ var PredecessorChicken = AnimatedObject.extend({
         });
         
         this.behavior.setState(data);
+        this.behavior.setBottomScaleOffset(this.groundHeightScale);                    
         
         if (this.behavior.acceleration.x == 0) {
             this.behavior.acceleration.x = -0.05;

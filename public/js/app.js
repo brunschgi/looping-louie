@@ -75,7 +75,7 @@ window.onload = function() {
 
         socket.on('msgFromPredecessor', function(data) {
             if (data.msg == 'chickenArrives') {
-                var chicken = new PredecessorChicken(app);
+                var chicken = new PredecessorChicken(app, groundHeightScale);
                 chicken.appears(data);
                 app.predecessorsChicken[app.chickenId++] = chicken;
             }

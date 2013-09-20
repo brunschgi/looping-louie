@@ -69,16 +69,17 @@ var LeftToRightBehavior = Behavior.extend({
         visual.position.x += this.velocity.x;
         visual.position.y += this.velocity.y;
         
+        var bottomOffset = view.bounds.height * this.bottomScaleOffset;
         
         var cond = {
-            hitBottom: visual.bounds.bottom - (view.bounds.height * this.bottomScaleOffset) >= view.bounds.bottom,
+            hitBottom: visual.bounds.bottom >= view.bounds.bottom - bottomOffset,
             hitTop: visual.bounds.top <= view.bounds.top,
             hitRight: visual.bounds.right >= view.bounds.right,
             leftView: visual.bounds.left > view.bounds.right || visual.bounds.top >= view.bounds.bottom
         };
         if (cond.hitBottom) {
             this.velocity.y *= -0.8;
-            visual.position.y = view.bounds.bottom - visual.bounds.height / 2.0;
+            visual.position.y = view.bounds.bottom - visual.bounds.height / 2.0 - bottomOffset;
         }
         if (cond.hitTop) {
             this.velocity.y *= -1.0;
