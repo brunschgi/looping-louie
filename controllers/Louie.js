@@ -116,7 +116,7 @@ module.exports = function (app, io) {
                 model.position = nextSocket.id;
 
                 // notify next player
-                io.sockets.socket(nextSocket.id).emit('start', data);
+                nextSocket.emit('start', data);
 
                 // notify all about the next position
                 io.sockets.in(data.room).emit('position', { id : nextSocket.id });
@@ -127,7 +127,7 @@ module.exports = function (app, io) {
             findNext(data.room, socket, function(nextSocket) {
                 // notify next player
                 delete data.room;
-                io.sockets.socket(nextSocket.id).emit('msgFromPredecessor', data);
+                nextSocket.emit('msgFromPredecessor', data);
             });
         }
     }
