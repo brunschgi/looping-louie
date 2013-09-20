@@ -20,10 +20,11 @@ module.exports = function (app, io) {
 
 
     var colors = [
-        { normal : '#f7ec32', highlighted: '#db00c0' },
-        { normal : '#f9eb00', highlighted: '#f7ec32' },
-        { normal : '#019ac4', highlighted: '#01c2f7' },
-        { normal : '#ce0014', highlighted: '#ff021b' }
+        { normal : '#a80093', highlighted: '#db00c0', chickenColor: 'black' },
+        { normal : '#f9eb00', highlighted: '#faff00', chickenColor: 'yellow' },
+        { normal : '#019ac4', highlighted: '#01c2f7', chickenColor: 'blue' },
+        { normal : '#ce0014', highlighted: '#ff021b', chickenColor: 'red' },
+        { normal : '#3d8902', highlighted: '#53bb03', chickenColor: 'green' }
     ];
 
     var first = true;
@@ -31,12 +32,13 @@ module.exports = function (app, io) {
     var model = {
         players: {
            /* socketId : {
-            'lives': 3
+            'lives': 3,
+            'color': { normal : '#f7ec32', highlighted: '#db00c0', chickenColor: 'black' },
            } */
         },
         position: 0
     };
-    
+
     var findNext = function (room, socket, callback) {
         var sockets = io.sockets.clients(room);
         for(var i = 0, len = sockets.length; i < len; i++) {
@@ -47,7 +49,7 @@ module.exports = function (app, io) {
                 callback(sockets[index]);
             }
         }
-        
+
     };
 
     return {
@@ -55,16 +57,18 @@ module.exports = function (app, io) {
          * join.
          */
         join: function (data, socket) {
-            var maxConnections = 4;
-            if(io.sockets.clients(data.room).length < maxConnections) {
+            var maxConnections = 5;
+            var numConnections = io.sockets.clients(data.room).length;
+            if(numConnections < maxConnections) {
                 socket.join(data.room);
-                model.players[socket.id] = { lives: 3, color: colors[io.sockets.clients(data.room).length - 1] };
+                model.players[socket.id] = { lives: 3, color: colors[numConnections] };
 
                 // notify all about the changed game state (additional player)
                 io.sockets.in(data.room).emit('state', model);
 
                 if(first) {
                     socket.emit('start', {});
+                    model.position = socket.id;
                     first = false;
                 }
             }
@@ -91,7 +95,10 @@ module.exports = function (app, io) {
          */
         score: function (data, socket) {
             var player = model.players[socket.id];
-            player.lives--;
+
+            if(player.lives > 0) {
+                player.lives--;
+            }
 
             // notify all about the changed game state (updated lives)
             io.sockets.in(data.room).emit('state', model);
@@ -104,6 +111,8 @@ module.exports = function (app, io) {
             var sockets = io.sockets.clients(data.room);
             // notify next player
             findNext(data.room, socket, function(nextSocket) {
+                model.position = nextSocket.id;
+
                 // notify next player
                 io.sockets.socket(nextSocket.id).emit('start', data);
 
@@ -111,7 +120,7 @@ module.exports = function (app, io) {
                 io.sockets.in(data.room).emit('position', { id : nextSocket.id });
             });
         },
-        
+
         tellNext: function (data, socket) {
             findNext(data.room, socket, function(nextSocket) {
                 // notify next player

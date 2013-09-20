@@ -25,7 +25,7 @@ window.onload = function() {
         view: view,
         predecessorsChicken: {},
         chickenId: 0,
-        
+
         pickedChicken: function() {
             socket.emit('score', { room: room });
         },
@@ -35,23 +35,22 @@ window.onload = function() {
             data.msg = 'chickenArrives';
             socket.emit('tellNext', data );
         },
-        
+
         louieIsAboutLeaving: function(data) {
             data.room = room;
             socket.emit('end', data);
         }
-        
-        
 
     };
 
     app.chicken = new Chicken(app);
     app.louie = new Louie(app);
+    app.statusBar = new StatusBar(app);
 
     view.onFrame = function() {
         app.louie.onFrame();
         app.chicken.onFrame();
-        for(var i in app.predecessorsChicken) {  
+        for(var i in app.predecessorsChicken) {
             if (app.predecessorsChicken[i].isActive())
                 app.predecessorsChicken[i].onFrame();
             else
@@ -62,6 +61,7 @@ window.onload = function() {
     view.onResize = function() {
         app.louie.resize();
         app.chicken.resize();
+        app.statusBar.resize();
     };
 
     tool.onMouseDrag = function(event) {
@@ -69,30 +69,28 @@ window.onload = function() {
     };
 
     socket.on('start', function (data) {
-        console.log('start louie');
         app.louie.appears(data);
     });
 
     socket.on('msgFromPredecessor', function(data) {
-        console.log('message from predecessor: ' + data.msg);
         if (data.msg == 'chickenArrives') {
             var chicken = new PredecessorChicken(app);
             chicken.appears(data);
             app.predecessorsChicken[app.chickenId++] = chicken;
         }
-         
+
     });
 
     // receive
     socket.on('position', function (data) {
         // update position (status bar)
-        console.log('update position to ' + data.id);
+        app.statusBar.updatePosition(data);
     });
 
 
     socket.on('state', function (data) {
         // update state -> redraw players etc.
-        console.log('update state');
+        app.statusBar.update(data);
     });
 
 
