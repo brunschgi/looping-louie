@@ -5,7 +5,7 @@ html, body {
 
 body {
     background-image: url('../img/looping_louie_splash_screen.png');
-    background-size: contain;
+    background-size: cover;
     background-repeat: no-repeat;
 }
 
