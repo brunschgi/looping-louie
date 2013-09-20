@@ -46,10 +46,12 @@ window.onload = function() {
             if (app.chicken)
                 app.chicken.onFrame();
             for(var i in app.predecessorsChicken) {
-                if (app.predecessorsChicken[i].isActive())
-                    app.predecessorsChicken[i].onFrame();
-                else
-                    delete app.predecessorsChicken[i];
+                if(app.predecessorsChicken.hasOwnProperty(i)) {
+                    if (app.predecessorsChicken[i].isActive())
+                        app.predecessorsChicken[i].onFrame();
+                    else
+                        delete app.predecessorsChicken[i];
+                }
             }
         };
 
