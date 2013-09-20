@@ -1,5 +1,6 @@
 var StatusBar = Class.extend({
     init: function (app) {
+        this.app = app;
         this.view = app.view;
         this.group = new paper.Group();
         this.rects = {};
@@ -8,6 +9,15 @@ var StatusBar = Class.extend({
 
     resize: function() {
         // TODO: resize status bar
+    },
+
+    ground: function(color) {
+        // draw ground
+        console.log(this.view.bounds.bottomLeft);
+        var bottomLeft = this.view.bounds.bottomLeft;
+        var height = this.view.bounds.height / 6;
+        var ground = new paper.Path.Rectangle(new paper.Point(bottomLeft.x, bottomLeft.y - height), new paper.Size(this.view.bounds.width, height));
+        ground.fillColor = color;
     },
 
     update: function(data) {

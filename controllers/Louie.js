@@ -71,6 +71,8 @@ module.exports = function (app, io) {
                     model.position = socket.id;
                     first = false;
                 }
+
+                socket.emit('welcome', model.players[socket.id]);
             }
             else {
                 socket.emit('maximum reached', { maxConnections: maxConnections})

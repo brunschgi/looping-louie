@@ -1,18 +1,6 @@
 var room = 'looping';
 var socket = io.connect('http://' + document.location.hostname);
 
-// join room
-socket.emit('join', { room: room});
-
-socket.on('maximum reached', function(data) {
-    // display maximum players reached message
-    alert('only ' + data.maxConnections + ' players can play together');
-});
-
-// socket.emit('leave', { room: room});
-
-
-
 window.onload = function() {
 
     var canvas = document.getElementById('canvas-louie');
@@ -25,6 +13,7 @@ window.onload = function() {
         view: view,
         predecessorsChicken: {},
         chickenId: 0,
+        player: {},
 
         pickedChicken: function() {
             socket.emit('score', { room: room });
@@ -68,6 +57,11 @@ window.onload = function() {
         app.louie.push(event.delta);
     };
 
+    socket.on('welcome', function (data) {
+        app.player = data;
+        app.statusBar.ground(data.color.normal);
+    });
+
     socket.on('start', function (data) {
         app.louie.appears(data);
     });
@@ -94,6 +88,15 @@ window.onload = function() {
     });
 
 
+    // join room
+    socket.emit('join', { room: room});
+
+    socket.on('maximum reached', function(data) {
+        // display maximum players reached message
+        alert('only ' + data.maxConnections + ' players can play together');
+    });
+
+    // socket.emit('leave', { room: room});
 }
 
 
