@@ -42,7 +42,7 @@ var StatusBar = Class.extend({
                 rects[id].fillColor = player.color.normal;
 
                 if(id == data.position) {
-                    rects[id].bounds.height = 1.5 * width
+                    rects[id].bounds.height = 1.3 * width
                 }
                 else {
                     rects[id].bounds.height = 0.2 * width;
@@ -51,13 +51,11 @@ var StatusBar = Class.extend({
                 this.group.addChild(rects[id]);
 
                 for (var i = 0, len = player.lives; i < len; i++) {
-                    var chicken = chickens[chickenColor][i] = new paper.Raster('chicken_' + chickenColor + '-' + (i + 1));
-                    var ratio = (this.view.bounds.width / 20) / chicken.bounds.width;
-                    chicken.scale(ratio);
-
                     position += width;
-                    chicken.position.x = position;
-                    chicken.position.y = chicken.bounds.height - (chicken.bounds.height / 3);
+                    var chicken = chickens[chickenColor][i] = new paper.Path.Circle(new paper.Point(position, width * 0.6), width/3);
+                    chicken.fillColor = '#ffffff';
+                    chicken.strokeWidth = 3;
+                    chicken.strokeColor = player.color.normal;
 
                     this.group.addChild(chickens[chickenColor][i]);
                 }
@@ -78,7 +76,7 @@ var StatusBar = Class.extend({
 
                     if(id == data.id) {
                         // highlight
-                        rects[id].bounds.height = this.width * 1.5;
+                        rects[id].bounds.height = this.width * 1.3;
                     }
                     else {
                         rects[id].bounds.height = this.width * 0.2;

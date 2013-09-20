@@ -107,6 +107,6 @@ window.onload = function() {
 
         // socket.emit('leave', { room: room});
     }, 2000);
-}
+};
 
 
