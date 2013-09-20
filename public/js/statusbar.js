@@ -12,9 +12,10 @@ var StatusBar = Class.extend({
         // TODO: resize status bar
     },
 
-    ground: function(color, height) {
+    ground: function(color, heightScale) {
         // draw ground
         var bottomLeft = this.view.bounds.bottomLeft;
+        var height = view.bounds.height * heightScale;
         var ground = new paper.Path.Rectangle(new paper.Point(bottomLeft.x, bottomLeft.y - height), new paper.Size(this.view.bounds.width, height));
         ground.fillColor = color;
         ground.sendToBack();

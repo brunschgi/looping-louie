@@ -26,7 +26,12 @@ var LeftToRightBehavior = Behavior.extend({
     init: function(view, visual, callbacks) {
         this._super(view, visual, callbacks);
         this.velocity = new paper.Point(10.0, 0.0);
-        this.acceleration = new paper.Point(0, 0.9);   
+        this.acceleration = new paper.Point(0, 0.9);  
+        this.bottomScaleOffset = 1;
+    },
+    
+    setBottomScaleOffset: function(bottomScaleOffset) {
+        this.bottomScaleOffset = bottomScaleOffset;
     },
     
     isActive: function() {
@@ -66,7 +71,7 @@ var LeftToRightBehavior = Behavior.extend({
         
         
         var cond = {
-            hitBottom: visual.bounds.bottom >= view.bounds.bottom,
+            hitBottom: visual.bounds.bottom - (view.bounds.height * this.bottomScaleOffset) >= view.bounds.bottom,
             hitTop: visual.bounds.top <= view.bounds.top,
             hitRight: visual.bounds.right >= view.bounds.right,
             leftView: visual.bounds.left > view.bounds.right || visual.bounds.top >= view.bounds.bottom

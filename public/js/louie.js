@@ -1,6 +1,7 @@
 var Louie = AnimatedObject.extend({
-    init: function (app) {
+    init: function (app, groundHeightScale) {
         this._super(app);
+        this.groundHeightScale = groundHeightScale;
         this.visual = new paper.Raster('louie');
         this.reset();
         this.resize();
@@ -9,6 +10,8 @@ var Louie = AnimatedObject.extend({
     resize: function() {
         var ratio = (this.app.view.bounds.width / 5) / this.visual.bounds.width;
         this.visual.scale(ratio);
+        if (this.behavior)
+            this.behavior.setBottomScaleOffset(this.groundHeightScale);        
     },
     
 
@@ -37,7 +40,8 @@ var Louie = AnimatedObject.extend({
                 self.app.chicken.checkCollision(self.visual.bounds, self);
             }
         });
-        this.behavior.setState(data);        
+        this.behavior.setState(data);  
+        this.behavior.setBottomScaleOffset(this.groundHeightScale);
     },
     
 

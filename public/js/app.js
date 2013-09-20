@@ -7,7 +7,7 @@ window.onload = function() {
     paper.setup(canvas);
     var view = paper.view;
     var tool = new paper.Tool();
-    var groundHeight = view.bounds.height / 6;
+    var groundHeightScale = 1 / 6;
 
 
     var app = {
@@ -33,7 +33,7 @@ window.onload = function() {
 
     };
 
-    app.louie = new Louie(app);
+    app.louie = new Louie(app, groundHeightScale / 2);
     app.statusBar = new StatusBar(app);
 
     view.onFrame = function() {
@@ -60,8 +60,8 @@ window.onload = function() {
 
     socket.on('welcome', function (data) {
         app.player = data;
-        app.statusBar.ground(data.color.normal, groundHeight);
-        app.chicken = new Chicken(app, 'chicken_' + app.player.color.chickenColor + '-', data.lives);
+        app.statusBar.ground(data.color.normal, groundHeightScale);
+        app.chicken = new Chicken(app, 'chicken_' + app.player.color.chickenColor + '-', data.lives, groundHeightScale / 2);
     });
 
     socket.on('start', function (data) {

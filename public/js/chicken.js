@@ -1,8 +1,9 @@
 var Chicken = AnimatedObject.extend({
-    init: function(app, img, lives) {
+    init: function(app, img, lives, groundHeightScale) {
         this.img = img;
         this.hits = 1;
         this.lives = lives;
+        this.groundHeightScale = groundHeightScale;
         this._super(app);
         this.visual = new paper.Raster(this.img + this.hits);
         this.reset();        
