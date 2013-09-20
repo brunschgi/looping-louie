@@ -7,7 +7,7 @@ var Louie = AnimatedObject.extend({
     },
 
     resize: function() {
-        var ratio = (this.app.view.bounds.width / 8) / this.visual.bounds.width;
+        var ratio = (this.app.view.bounds.width / 5) / this.visual.bounds.width;
         this.visual.scale(ratio);
     },
     
